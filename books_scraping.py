@@ -13,12 +13,28 @@ def scrape_books(url):
     # Scrape book info
     books = soup.find_all("article")
     
-    # Iterate through all books and append all book data to a list
+    # Iterate through all books and append all book data (as a tuple) to a list
     all_books = []
     for book in books:
         book_data = (get_title(book), get_price(book), get_rating(book))
         all_books.append(book_data)
-        print(all_books)
+        save_data(all_books)
+
+def save_data(all_books):
+
+    # Create database
+    conn = sqlite3.connect("books.db")
+    c = conn.cursor()    
+
+    # Create a table in database
+ #   c.execute('''CREATE TABLE books 
+ #       (title TEXT, price REAL, rating INTEGER)''')
+
+    for book in all_books:
+        c.execute("INSERT INTO books VALUES (?,?,?)", book)
+
+    conn.commit()
+    conn.close()
 
 # Method to extract the book title
 def get_title(book):
